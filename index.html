@@ -1,0 +1,44 @@
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <title>Input API</title>
+        <script type="module" src="assets/js/Element.js"></script>
+        <link rel="stylesheet" href="assets/css/main.css">
+        <link rel="stylesheet" href="assets/css/dark.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <div class="banner">
+            <p>Ville : <span class="city_found"> </span><br>
+                Température : <span class="city_temp">00</span><span class="city_units"></span></p>
+
+            <div>
+                <img class="icon" src=" " alt="" style="width: 150px;">
+            </div>
+        </div>
+
+        <div class="content">
+            <form>
+                <label for="city">Indiquez votre ville</label><br><br>
+                <input placeholder="Nom de la ville.." type="text" name="city" id="city">
+                <button type="button" class="submit">Rechercher</button><br><br>
+
+                <input type="radio" name="units" id="celcius" value="metric" checked>
+                <label for="celcius">Celcius</label>
+
+                <input type="radio" name="units" id="standard" value="standard">
+                <label for="standard">Kelvin</label>
+
+                <input type="radio" name="units" id="fahrenheit" value="imperial">
+                <label for="fahrenheit">Fahrenheit</label>
+            </form>
+        </div>
+
+        <div class="darkmode">
+            <span class="dark-btnn">Dark mode</span>
+        </div>
+
+
+        <script type="module" src="assets/js/app.js"></script>
+    </body>
+</html>

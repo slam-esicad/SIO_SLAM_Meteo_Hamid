@@ -1,0 +1,20 @@
+.dark-divbtn {
+    background-color: white;
+}
+
+.dark-btn {
+    color: black;
+}
+
+.dark-bg {
+    background-color: #343434;
+}
+
+.dark-text {
+    color: white;
+}
+
+.dark-banner {
+    background-color: #402727;
+    box-shadow: 1px 1px 10px white;
+}
