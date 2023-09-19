@@ -3,14 +3,72 @@ import Element from "./Element.js";
 
 let btn_search = document.querySelector('.submit')
 let dark = document.querySelector('.dark-btnn')
+let radio = document.querySelector('.units')
 
 async function weather(city, units) {
     let req = await fetch('https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=e2c95873f84c750dd9978fabe48cd75f&lang=fr&units=' + units + '')
     return await req.json()
 }
 
+async function weatherLoca(lat, lon, units) {
+    let req = await fetch("https://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon+"&appid=e2c95873f84c750dd9978fabe48cd75f&lang=fr&units=" + units + "")
+    return await req.json()
+}
+
+let pos = (data) => {
+
+    let rada = document.getElementsByName('units')
+    for (let i = 0; i < rada.length; i++) {
+        if(rada[i].checked) {
+            console.log(rada[i].checked)
+            let dataLoca = weatherLoca(data.coords.latitude, data.coords.longitude, "metric")
+
+            const promise1 = Promise.resolve(dataLoca);
+            promise1.then((value) => {
+                let units = document.getElementsByName('units')
+
+                document.querySelector('#city').value = value.name
+                document.querySelector('.city_found').innerHTML = value.name
+                console.log(value.main.temp)
+                document.querySelector('.city_temp').innerHTML = Math.trunc(value.main.temp)
+                document.querySelector('.icon').src = "https://openweathermap.org/img/w/" + value.weather[0].icon + ".png"
+            })
+        }
+    }
+
+}
+
+let error = (err) => {
+    console.warn('Erreur : ' + err.message)
+}
+
+let clickPos = document.querySelector('.loca')
+
+clickPos.addEventListener('click', () => {
+    console.log(navigator.geolocation.getCurrentPosition(pos))
+})
+
+function up(res, varUnit) {
+    const promise1 = Promise.resolve(res);
+    promise1.then((value) => {
+        document.querySelector('.city_found').innerHTML = document.querySelector('#city').value
+        document.querySelector('.city_temp').innerHTML = Math.trunc(value.main.temp)
+        document.querySelector('.icon').src = "https://openweathermap.org/img/w/" + value.weather[0].icon + ".png"
+        if(varUnit.value === 'metric') {
+            document.querySelector('.city_units').innerHTML = "°C"
+            document.querySelector('.city_units').title = "Celcius"
+        } else if(varUnit.value === 'standard') {
+            document.querySelector('.city_units').innerHTML = "°K"
+            document.querySelector('.city_units').title = "Kelvin"
+        } else if(varUnit.value === 'imperial') {
+            document.querySelector('.city_units').innerHTML = "°F"
+            document.querySelector('.city_units').title = "Impérial"
+        }
+    });
+}
+
 btn_search.addEventListener('click', () => {
-    $('.banner').show(1000)
+
     let city = document.querySelector('#city').value
 
     let units = document.getElementsByName('units')
@@ -20,29 +78,35 @@ btn_search.addEventListener('click', () => {
             let city_temp = document.querySelector('.city_temp')
             console.log(units[i].value)
             let res = weather(city, units[i].value)
+
+
             //let unit = units[i].value
             //console.log(units[i].value)
 
-            const promise1 = Promise.resolve(res);
-            promise1.then((value) => {
-                document.querySelector('.city_found').innerHTML = city
-                document.querySelector('.city_temp').innerHTML = Math.trunc(value.main.temp)
-                console.log(value)
-                document.querySelector('.icon').src = "https://openweathermap.org/img/w/" + value.weather[0].icon + ".png"
-                if(units[i].value === 'metric') {
-                    document.querySelector('.city_units').innerHTML = "°C"
-                    document.querySelector('.city_units').title = "Celcius"
-                } else if(units[i].value === 'standard') {
-                    document.querySelector('.city_units').innerHTML = "°K"
-                    document.querySelector('.city_units').title = "Kelvin"
-                } else if(units[i].value === 'imperial') {
-                    document.querySelector('.city_units').innerHTML = "°F"
-                    document.querySelector('.city_units').title = "Impérial"
-                }
-            });
+
+
+            up(res, units[i])
         }
     }
 })
+
+let res
+let rad = document.getElementsByName('units')
+let prev = null
+for (let x = 0; x < rad.length; x++) {
+    rad[x].addEventListener('change', function() {
+        console.log(rad[x])
+        res = weather(document.querySelector('#city').value, rad[x].value)
+        document.querySelector('.city_found').innerHTML = document.querySelector('#city').value
+        up(res, rad[x])
+    });
+}
+
+
+
+
+
+
 
 dark.addEventListener('click', () => {
     let darkBtn = new Element('.dark-btnn').toDark('dark-btn')
@@ -53,12 +117,3 @@ dark.addEventListener('click', () => {
 
 })
 
-let pos = (data) => {
-    console.log(data.coords.latitude)
-}
-
-let error = (err) => {
-    console.warn('Erreur : ' + err.message)
-}
-
-console.log(navigator.geolocation.getCurrentPosition(pos))
