@@ -3,6 +3,7 @@ export default class Element {
         this.id = id
     }
 
+
     toDark(update) {
         document.querySelector(this.id).classList.toggle(update)
     }
