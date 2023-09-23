@@ -1,5 +1,6 @@
 //$('.banner').hide()
 import Element from "./Element.js";
+import Geolocalisation from "./Geolocalisation.js";
 
 let btn_search = document.querySelector('.submit')
 let dark = document.querySelector('.dark-btnn')
@@ -10,23 +11,19 @@ async function weather(city, units) {
     return await req.json()
 }
 
-async function weatherLoca(lat, lon, units) {
-    let req = await fetch("https://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon+"&appid=e2c95873f84c750dd9978fabe48cd75f&lang=fr&units=" + units + "")
-    return await req.json()
-}
-
 let pos = (data) => {
 
     let rada = document.getElementsByName('units')
     for (let i = 0; i < rada.length; i++) {
         if(rada[i].checked) {
-            console.log(rada[i].checked)
-            let dataLoca = weatherLoca(data.coords.latitude, data.coords.longitude, "metric")
 
-            const promise1 = Promise.resolve(dataLoca);
-            promise1.then((value) => {
-                let units = document.getElementsByName('units')
+            let dataLoca = new Geolocalisation(data.coords.latitude, data.coords.longitude, rada[i].value).getInfos()
 
+            //let dataLoca = Geoloca.getInfos()
+            //let dataLoca = weatherLoca(data.coords.latitude, data.coords.longitude, "metric")
+
+            const promise1 = Promise.resolve(dataLoca)
+            .then((value) => {
                 document.querySelector('#city').value = value.name
                 document.querySelector('.city_found').innerHTML = value.name
                 console.log(value.main.temp)
@@ -38,13 +35,7 @@ let pos = (data) => {
 
 }
 
-let error = (err) => {
-    console.warn('Erreur : ' + err.message)
-}
-
-let clickPos = document.querySelector('.loca')
-
-clickPos.addEventListener('click', () => {
+document.querySelector('.loca').addEventListener('click', () => {
     console.log(navigator.geolocation.getCurrentPosition(pos))
 })
 
@@ -70,7 +61,6 @@ function up(res, varUnit) {
 btn_search.addEventListener('click', () => {
 
     let city = document.querySelector('#city').value
-
     let units = document.getElementsByName('units')
 
     for (let i = 0; i < units.length; i++) {
@@ -79,12 +69,6 @@ btn_search.addEventListener('click', () => {
             console.log(units[i].value)
             let res = weather(city, units[i].value)
 
-
-            //let unit = units[i].value
-            //console.log(units[i].value)
-
-
-
             up(res, units[i])
         }
     }
@@ -92,7 +76,6 @@ btn_search.addEventListener('click', () => {
 
 let res
 let rad = document.getElementsByName('units')
-let prev = null
 for (let x = 0; x < rad.length; x++) {
     rad[x].addEventListener('change', function() {
         console.log(rad[x])
@@ -101,11 +84,6 @@ for (let x = 0; x < rad.length; x++) {
         up(res, rad[x])
     });
 }
-
-
-
-
-
 
 
 dark.addEventListener('click', () => {
